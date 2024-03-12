@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MFU RIDE</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/public/hamberger.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+</head>
+
+<style>
+    body {
+    background: linear-gradient(135deg, #a6d9fc, #e9bcfa);
+}
+
+#navbar{
+    color: white;
+    background-color: rgb(77, 13, 104);
+}
+#footer{
+    color: white;
+    position: fixed;
+    bottom: 0; 
+    left: 0;
+    right: 0;
+    padding: 20px; 
+    text-align: center; 
+    background-color: rgb(77, 13, 104);
+}
+#link{
+    text-decoration: none;
+}
+
+.container{
+    text-align: center;
+}
+
+.pickup1 {
+    display: block;
+    margin-bottom: 50px;
+    margin-top: 300px;
+    margin-left: 50px;
+}
+
+.return1 {
+    display: block;
+    margin-bottom: 50px;
+    margin-left: 500px;
+    margin-top: 300px;
+}
+
+#time-input {
+    margin-left: 50px;
+}
+
+.time {
+    margin-left: 50px;
+}
+
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.image-container {
+    max-width: 30%;
+    max-height: 70%;
+    text-align: center;
+    height: 1vh;
+
+}
+
+img {
+    max-width: 100%;
+}
+
+#buttonn {
+    justify-content: center;
+
+}
+
+#back {
+    margin-left: 50px;
+}
+
+.big {
+    font-size: 15px;
+    /* ปรับขนาดของข้อความบนปุ่ม */
+    padding: 10px 50px;
+    /* ปรับขนาดของปุ่ม */
+    border-radius: 20px;
+}
+</style>
+<body>
+    
+
+  <!-- Navbar -->
+  <header id="navbar" class="text-light py-3">
+    <div id="change" class="d-flex">
+        <!--icon menu -->
+        <div class="top">
+            <a href="#" class="menu_icon mx-5"><i class="material-icons">dehaze</i></a>
+        </div>
+        <!-- icon motor -->
+        <div class=" col-1">
+            <i class="fas fa-motorcycle"></i>
+        </div>
+        <!-- MFU RIDE -->
+        <div class="col-1">
+            <a class="navbar-brand" href="#">MFU RIDE</a>
+        </div>
+        <div class="col-3">
+
+        </div>
+        <!-- icon phone -->
+        <div class="call-container col-2 mx-5 text-center">
+            <i class="fas fa-phone-alt"></i>
+            <span>call us +66**</span>
+        </div>
+        <!-- Name -->
+        <div class="col-1 user-name">
+            <a id="username-link" style="font-size: 1rem;" class="navbar-brand mx-3" href="#">username</a>
+        </div>
+        <!-- profile -->
+        <div class="col-1 ">
+            <i class="fas fa-user mx-5"></i>
+        </div>
+        <div class="col-1 d-flex">
+            <p>SIGN OUT</p>
+            <a href="/login"> <i class="fa fa-sign-out mx-2 mt-1"
+                    aria-hidden="true"></i></a>
+        </div>
+
+
+    </div>
+</header>
+<nav class="menu">
+    <a href="/home" class="item_menu">HOME</a>
+    <a href="/history" class="item_menu">HISTORY</a>
+    <a href="/profile" id="myprofile" class="item_menu">PROFILE</a>
+    <a href="/login" class="item_menu">LOG OUT</a>
+
+</nav>
+
+    <div id="tblProduct">
+
+    </div>
+   
+
+    
+       <!-- Footer -->
+  <div>
+    <footer id="footer" class=" text-center py-2">
+      <div>
+        <a id="link" href="/home">Home</a>
+        |
+        <a id="link" href="/history">History</a>
+        |
+        <a id="link" href="#">Contact</a>
+        <p>&copy; SERVICE IN MFU : +xxx-xxxx-xxxx</p>
+      </div>
+    </footer>
+  </div>
+  </div>
+
+  <script>   
+    fetch("/user")
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } 
+            throw Error("Cannot get user infomation");
+        })
+        .then(function (data) {
+            document.querySelector("#username-link").innerHTML = data.username;
+            document.querySelector("#myprofile").innerHTML = `<a href="/profile?id=${data.id}" id="myprofile" class="item_menu">PROFILE</a>`;
+        })
+        .catch(function(err) {
+            console.error(err);
+        })
+</script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("body").on('click', '.top', function () {
+                $("nav.menu").toggleClass("menu_show");
+            });
+        });
+
+        // get selected Product
+    
+ // get all products
+ getHistorys();
+
+//---------------GET PRODUCTS-----------------
+function getHistorys() {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const motorcycle_id = urlParams.get('id');
+
+    fetch(`/confirm/${motorcycle_id}`)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Bad response');
+        })
+        .then(function (data) {
+            let rows = '';
+            data.forEach(function (product) {
+                rows += `
+            <div class="container mt-5">
+<div class="image-container">
+    <img src="/public/img/${product.motorcycle_image}" alt="">
+</div>
+</div>  
+<div class="container ">
+    <div class="row">
+        <div class="col pickup1">
+
+            <label for="Pickup-select">Pickup:</label>
+            <!-- select date -->
+            <div class="form-group d-flex">
+                <div>
+                    <label for="date-input">เลือกวันที่:</label>
+                    <input type="date" id="date-borrow" name="date" class="form-control BorowDate">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col return1">
+
+            <label for="Return-select">Return:</label>
+            <div class="form-group d-flex">
+                <div>
+                    <label for="date-input">เลือกวันที่:</label>
+                    <input type="date" id="date-return" name="date" class="form-control ReturnDAte">
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- button confirm -->
+<div class="form-group d-flex " id="buttonn">
+    <div>
+        <button id="confirm-button" onclick="showConfirmSwal(${product.motorcycle_id})" class="btn btn-primary big" " >Confirm</button>
+    </div>
+    <div id="back">
+        <a href="/home"><button class="btn btn-danger big">back</button></a>
+    </div>
+</div>`;
+            });
+            tblProduct.innerHTML = rows;
+        })
+        .catch(function (err) {
+            console.error(err);
+            alert(err.message);
+        });
+
+    }
+    function handleConfirmation(id, borrowDate, returnDate) {
+    // Fetch user information
+    fetch("/user")
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Error fetching user information');
+            }
+        })
+        .then(function (userData) {
+            // Call the function to make PATCH and POST requests
+            makeConfirmationRequests(id, borrowDate, returnDate, userData.username);
+        })
+        .catch(function (error) {
+            console.error('Error fetching user information:', error);
+            // Handle error as needed
+        });
+}
+function makeConfirmationRequests(id, borrowDate, returnDate, username) {
+    // Variable to track whether PATCH request has been made
+    let patchSuccessful = false;
+
+    // Define the PATCH request details
+    const patchRequestDetails = {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            motorcycle_id: id,
+            motorcycle_name: '', // Add motorcycle_name as needed
+            user_borrow: username, // Use the fetched username
+            status: 'waiting',
+            // Other fields for PATCH
+        }),
+    };
+
+    // Send the PATCH request
+    fetch(`/confirm/${id}`, patchRequestDetails)
+        .then(response => {
+            if (response.ok) {
+                // If PATCH is successful, set the flag to true
+                patchSuccessful = true;
+                return response.json(); // assuming there's some response data to be processed
+            } else {
+                throw new Error('PATCH request failed');
+            }
+        })
+        .then(data => {
+            // Process the response data if needed
+        })
+        .catch(error => {
+            console.error('Error confirming (PATCH):', error);
+            // Handle error as needed
+        })
+        .finally(() => {
+            // After PATCH, proceed with POST
+            if (patchSuccessful) {
+                // Define the POST request details
+                const postRequestDetails = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        motorcycle_id: id,
+                        borrow_date: borrowDate,
+                        return_date: returnDate,
+                        // Other fields for POST
+                    }),
+                };
+
+                // Send the POST request
+                fetch(`/confirm/${id}`, postRequestDetails)
+                    .then(response => {
+                        if (response.ok) {
+                            // If POST is successful, fetch and display updated products
+                            getHistorys();
+                        } else {
+                            throw new Error('POST request failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error confirming (POST):', error);
+                        // Handle error as needed
+                    })
+                    .finally(() => {
+                        // If it's a POST request, redirect to "/history"
+                        window.location.href = "/history";
+                    });
+            }
+        });
+}
+
+
+
+function showConfirmSwal(id) {
+    Swal.fire({
+        icon: 'info',
+        title: 'For sure',
+        text: "Are you sure you want to borrow?",
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+    }).then(result => {
+        if (result.isConfirmed) {
+            // Get the selected dates
+            const borrowDate = $("#date-borrow").val();
+            const returnDate = $("#date-return").val();
+
+            // Handle the logic after confirming (e.g., call handleConfirmation function)
+            handleConfirmation(id, borrowDate, returnDate);
+        }
+    });
+}
+
+
+
+   
+        
+    </script>
+</body>
+</html>
+
+
+<script>
+    
+</script>

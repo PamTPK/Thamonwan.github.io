@@ -1,0 +1,18 @@
+    <script>
+        fetch("/user")
+            .then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                } 
+                throw Error("Cannot get user infomation");
+            })
+            .then(function (data) {
+                document.querySelector("#username-link").innerHTML = data.username;
+                
+            })
+            .catch(function(err) {
+                console.error(err);
+            })
+    </script>
+
+    <a id="username-link" style="font-size: 1rem;" class="navbar-brand mx-3" href="#">username</a>
